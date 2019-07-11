@@ -1,6 +1,6 @@
 # md_malloc
 
-A header file written in C, comprising dynamic memory allocation functions for contiguous multi-dimensional arrays. The code is also MSVC compliant.
+A header file comprising dynamic memory allocation functions for contiguous multi-dimensional arrays. The code is written in C and is MSVC compliant.
 
 ## Motivation
 
