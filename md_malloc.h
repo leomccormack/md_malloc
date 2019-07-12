@@ -32,7 +32,7 @@
  *     An example of allocating, indexing and freeing a 3-D "array":
  *       float*** example3D = (float***)malloc3d(10, 20, 5, sizeof(float);
  *       // Due to the contiguous nature of the allocation, this is possible:
- *       memset(ADR3D(example3D), 0, 10*20*5*sizeof(float));
+ *       memset(&example3D[0][0][0], 0, 10*20*5*sizeof(float));
  *       // And my still be indexed normally as:
  *       example3D[3][19][2] = 22.0f;
  *       // To free, simply call:
@@ -75,7 +75,6 @@ void*** calloc3d(size_t dim1, size_t dim2, size_t dim3, size_t data_size);
 void*** realloc3d(void*** ptr, size_t dim1, size_t dim2, size_t dim3, size_t data_size);
 void free3d(void*** ptr);
 
-
 #ifdef __cplusplus
 } /*extern "C"*/
 #endif
@@ -92,7 +91,7 @@ void free3d(void*** ptr);
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
-
+#include <string.h>
 
 void** malloc2d(size_t dim1, size_t dim2, size_t data_size)
 {
@@ -205,3 +204,4 @@ void free3d(void*** ptr)
 }
 
 #endif /* MD_MALLOC_ENABLE */
+
