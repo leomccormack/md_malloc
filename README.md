@@ -4,7 +4,7 @@ A header file comprising functions for dynamically allocating contiguous multi-d
 
 ## Motivation
 
-The main reasons for releasing these contiguous multi-dimensional memory allocation functions as a convenient header-only file are threefold. 
+The main reasons for consolidating these contiguous multi-dimensional memory allocation functions into one file are threefold. 
 
 The first is to avoid (and hopefully discourage) the wide-spread adoption of non-contiguous memory allocation:
 ```c
@@ -29,27 +29,27 @@ free(array2D);
 
 Second, is to still retain easy array indexing:
 ```c
-/* One may, allocate a contiguous A x B, 2-D "array" with as single malloc call: */
+/* One may allocate a contiguous A x B, 2-D "array" with as single malloc call as: */
 float* array2D = malloc(A*B*sizeof(float));
 
-/* However, these are also not ideal, as they must be indexed (i,j) as array2D[i*B+j], 
- * which gets messy for high-dimensional arrays; 
+/* However, these are perhaps also not ideal, as they must be indexed (i,j) as 
+ * array2D[i*B+j], which gets particularly messy for high-dimensional arrays; 
  * e.g. (i,j,k,l,p), array5D[i*B*C*D*E + j*C*D*E + k*D*E + l*E +p] */
 ```
 
-And thirdly, to maintain easy passing of N-D arrays to other functions:
+And thirdly, to retain easy passing of N-D arrays to other functions:
 ```c
-/* Since C99, multidimensional arrays can be declared as */
+/* Since C99, multidimensional arrays may indeed be declared as */
 float (*array2D)[B] = malloc(sizeof(float[A][B]));
 
-/* These can be indexed "array2D[i][j]" and freed "free(array2D)" easily. However, 
- * these cannot be easily and flexibly passed to generalised functions due to the 
+/* which can be indexed "array2D[i][j]" and freed "free(array2D)" easily. However, 
+ * these cannot be easily and flexibly passed to generalised functions due to their 
  * variable type. */
  
 /* Furthermore, for cross-platform project development, supporting the ancient MSVC 
- * compiler is (unfortunately) a common limitation. 
+ * compiler is (unfortunately) a common requirement and limitation. 
  * Since Microsoft's C-compiler is still based on C89/C90, this C99-style may not be 
- * considered as a viable option regardless. */
+ * considered as a viable option, regardless. */
 ```
 
 
@@ -70,22 +70,23 @@ float** array2D = (float**)malloc2d(A, B, sizeof(float));
 /* To resize: */
 array2D = (float**)realloc2d(array2D, C, D, sizeof(float));
 
-/* Note that "array2D" is: 1) contiguous, 2) easily indexable, and 3) compiles under MSVC */
+/* Note that "array2D" is: 1) contiguous, 2) easily indexable, and 3) compiles under MSVC: */
 
-memset(&array2D[0][0], 0, C*D*sizeof(float)); 
-array2D[i][j] = 66.6f;
+memset(&array2D[0][0], 0, C*D*sizeof(float)); /* this is OK */
+array2D[i][j] = 66.6f; /* as is this */
 
-/* To free: */
+/* And to free: */
 free(array2D);
 
 ```
 
 ## Testing
 
-This project also includes a test/test.c file, which checks for array contiguity by using memcpy and CBLAS calls on md_malloc allocated arrays and subsequently comparing their results to that of their static memory counterparts.
+This project also includes a test/test.c file, which performs checks for array contiguity by using memcpy and CBLAS calls on md_malloc allocated arrays and subsequently comparing their results to that of their static memory counterparts.
 The test file also compares the time taken when using md_array, mangled arrays (array2d[i*dim2+j]), and C-99 style arrays. 
 
-TLDR: md_malloc has roughly the same speed performance for 2-D arrays. Whereas, 3-D arrays begin to show a slow-down. It is up to you and the nature of your project, as to whether this is an acceptable compromise. Here is the test output when allocating, indexing, populating, and freeing a 290 x 300 2-D array 30 000 times, and a 290 x 300 x 295 3-D array 100 times:
+TLDR: it would appear md_malloc has roughly the same speed performance for 2-D arrays. Whereas, 3-D arrays begin to show a slow-down. Therefore, it is up to the individual and the nature of their project, as to whether this is an acceptable compromise. 
+Here is the test output when allocating, indexing, populating, and freeing a 290 x 300 2-D array 30 000 times, and a 290 x 300 x 295 3-D array 100 times:
 
 ``` 
 ********** Malloc Speed Test - 2D DATA **********
