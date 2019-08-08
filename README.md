@@ -73,6 +73,7 @@ array2D = (float**)realloc2d(array2D, C, D, sizeof(float));
 /* Note that "array2D" is: 1) contiguous, 2) easily indexable, and 3) compiles under MSVC: */
 
 memset(&array2D[0][0], 0, C*D*sizeof(float)); /* this is OK */
+memset(ADR2D(array2D), 0, C*D*sizeof(float)); /* or with a the macro... */
 array2D[i][j] = 66.6f; /* as is this */
 
 /* And to free: */
