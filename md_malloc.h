@@ -38,7 +38,7 @@
  *       // To free, simply call:
  *       free(example3D);
  *       // Or:
- *       free3d((void***)example3D);
+ *       free3d((void****)&example3D); // sets example3D to NULL too
  * Dependencies:
  *     (none)
  * Author, date created:
@@ -67,13 +67,13 @@ extern "C" {
 void** malloc2d(size_t dim1, size_t dim2, size_t data_size);
 void** calloc2d(size_t dim1, size_t dim2, size_t data_size);
 void** realloc2d(void** ptr, size_t dim1, size_t dim2, size_t data_size);
-void free2d(void** ptr);
+void free2d(void*** ptr);
 
 /* 3-D */
 void*** malloc3d(size_t dim1, size_t dim2, size_t dim3, size_t data_size);
 void*** calloc3d(size_t dim1, size_t dim2, size_t dim3, size_t data_size);
 void*** realloc3d(void*** ptr, size_t dim1, size_t dim2, size_t dim3, size_t data_size);
-void free3d(void*** ptr);
+void free3d(void**** ptr);
 
 #ifdef __cplusplus
 } /*extern "C"*/
@@ -131,11 +131,11 @@ void** realloc2d(void** ptr, size_t dim1, size_t dim2, size_t data_size)
     return ptr;
 }
 
-void free2d(void** ptr)
+void free2d(void*** ptr)
 {
-    if(ptr!=NULL){
-        free(ptr);
-        ptr = NULL;
+    if(*ptr!=NULL){
+        free(*ptr);
+        *ptr = NULL;
     }
 }
 
@@ -195,11 +195,11 @@ void*** realloc3d(void*** ptr, size_t dim1, size_t dim2, size_t dim3, size_t dat
     return ptr;
 }
 
-void free3d(void*** ptr)
+void free3d(void**** ptr)
 {
-    if(ptr!=NULL){
-        free(ptr);
-        ptr = NULL;
+    if(*ptr!=NULL){
+        free(*ptr);
+        *ptr = NULL;
     }
 }
 
