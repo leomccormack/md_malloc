@@ -83,7 +83,7 @@ int main(int argc, const char * argv[])
             for(j=0; j<dim2; j++)
                 array2d_dynamic[i][j] = rand()/RAND_MAX;
         /* only passes this test if "array2d_dynamic" is truely contiguous */
-        memcpy(&array2d_static_rand[0], ADR2D(array2d_dynamic), dim1*dim2*sizeof(test_data_type));
+        memcpy(&array2d_static_rand[0], FLATTEN2D(array2d_dynamic), dim1*dim2*sizeof(test_data_type));
         for(i=0; i<dim1; i++)
             for(j=0; j<dim2; j++)
                 error += fabs(array2d_dynamic[i][j]-array2d_static_rand[i*dim2 + j]);
@@ -191,7 +191,7 @@ int main(int argc, const char * argv[])
             for(j=0; j<dim2; j++)
                 array2d_dynamic[i][j] = rand()/RAND_MAX;
         /* only passes this test if "array2d_dynamic" is truely contiguous */
-        memcpy(&array2d_static_rand[0], ADR2D(array2d_dynamic), dim1*dim2*sizeof(test_data_type));
+        memcpy(&array2d_static_rand[0], FLATTEN2D(array2d_dynamic), dim1*dim2*sizeof(test_data_type));
         for(i=0; i<dim1; i++)
             for(j=0; j<dim2; j++)
                 error += fabs(array2d_dynamic[i][j]-array2d_static_rand[i*dim2 + j]);
@@ -226,13 +226,13 @@ int main(int argc, const char * argv[])
         for(i=0; i<dim2; i++)
             for(j=0; j<dim3; j++)
                 array2d_static_rand2[i*dim3 + j] = rand()/RAND_MAX;
-        memcpy(ADR2D(array2d_dynamic),  &array2d_static_rand[0], dim1*dim2*sizeof(test_data_type));
-        memcpy(ADR2D(array2d_dynamic2), &array2d_static_rand2[0], dim2*dim3*sizeof(test_data_type));
+        memcpy(FLATTEN2D(array2d_dynamic),  &array2d_static_rand[0], dim1*dim2*sizeof(test_data_type));
+        memcpy(FLATTEN2D(array2d_dynamic2), &array2d_static_rand2[0], dim2*dim3*sizeof(test_data_type));
  
         cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, dim1, dim3, dim2, 1.0f,
-                    ADR2D(array2d_dynamic), dim2,
-                    ADR2D(array2d_dynamic2), dim3, 0.0f,
-                    ADR2D(array2d_dynamic3), dim3);
+                    FLATTEN2D(array2d_dynamic), dim2,
+                    FLATTEN2D(array2d_dynamic2), dim3, 0.0f,
+                    FLATTEN2D(array2d_dynamic3), dim3);
         cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, dim1, dim3, dim2, 1.0f,
                     array2d_static_rand, dim2,
                     array2d_static_rand2, dim3, 0.0f,
@@ -268,7 +268,7 @@ int main(int argc, const char * argv[])
                 for(k=0; k<dim3; k++)
                     array3d_dynamic[i][j][k] = rand()/RAND_MAX;
         /* only passes this test if "array3d_dynamic" is truely contiguous */
-        memcpy((array3d_static), ADR3D(array3d_dynamic), dim1*dim2*dim3*sizeof(test_data_type));
+        memcpy((array3d_static), FLATTEN3D(array3d_dynamic), dim1*dim2*dim3*sizeof(test_data_type));
         for(i=0; i<dim1; i++)
             for(j=0; j<dim2; j++)
                 for(k=0; k<dim3; k++)
