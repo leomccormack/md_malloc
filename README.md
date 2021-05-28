@@ -1,6 +1,6 @@
 # md_malloc
 
-A header file comprising functions for dynamically allocating contiguous multi-dimensional arrays. The code is written in C and is MSVC compliant.
+A header file comprising functions for contiguously allocating multi-dimensional arrays. The code is written in C and is also MSVC compliant.
 
 ## Motivation
 
@@ -17,9 +17,10 @@ for(int i=0; i<A; i++)
  * employs multiple malloc calls, the second dimension vectors are not guaranteed to be
  * adjacent to one-another in memory i.e. the memory is not necessarily "contiguous". 
  * Therefore, calls to memset/memcpy or other functions which rely on contiguous memory
- * allocation may result in crashes or behave unpredictably. */
+ * allocation may result in crashes or behave unpredictably. Such allocations are
+ * also likely to be accessed much slower, when considering how CPUs cache nearby memory */
  
-memset(&array2D[0][0], 0, A*B*sizeof(float)); /* could be fine, but possibly not */
+memset(&array2D[0][0], 0, A*B*sizeof(float)); /* could be fine, but probably not */
 
 /* freeing this 2-D "array" is also slightly cumbersome: */
 for(int i=0; i<A; i++)
@@ -72,9 +73,9 @@ array2D = (float**)realloc2d(array2D, C, D, sizeof(float));
 
 /* Note that "array2D" is: 1) contiguous, 2) easily indexable, and 3) compiles under MSVC: */
 
-memset(&array2D[0][0], 0, C*D*sizeof(float)); /* this is OK */
-memset(ADR2D(array2D), 0, C*D*sizeof(float)); /* or with a the macro... */
-array2D[i][j] = 66.6f; /* as is this */
+memset(*array2D, 0, C*D*sizeof(float));           /* this is OK */
+memset(FLATTEN2D(array2D), 0, C*D*sizeof(float)); /* or with a the macro... */
+array2D[i][j] = 666.0f; /* as is this */
 
 /* And to free: */
 free(array2D);
@@ -83,10 +84,10 @@ free(array2D);
 
 ## Testing
 
-This project also includes a test/test.c file, which performs checks for array contiguity by using memcpy and CBLAS calls on md_malloc allocated arrays and subsequently comparing their results to that of their static memory counterparts.
-The test file also compares the time taken when using md_array, mangled arrays (array2d[i*dim2+j]), and C-99 style arrays. 
+This project also includes a test/test.c file, which performs checks that the arrays are truely contiguously allocated by using memcpy and CBLAS calls on md_malloc allocated arrays and subsequently comparing their results to that of their static memory counterparts.
+The test file also compares the time taken to allocate arrays using md_array, mangled arrays (array2d[i*dim2+j]), and C-99 style arrays. 
 
-TLDR: it would appear md_malloc has roughly the same speed performance for 2-D arrays. Whereas, 3-D arrays begin to show a slow-down. Therefore, it is up to the individual and the nature of their project, as to whether this is an acceptable compromise. 
+TLDR: md_malloc provides truely contiguous memory allocation. It also has roughly the same allocation speed performance for 2-D arrays compared to C99 and mangled arrays. Whereas, 3-D arrays begin to show a slow-down.
 Here is the test output when allocating, indexing, populating, and freeing a 290 x 300 2-D array 30 000 times, and a 290 x 300 x 295 3-D array 100 times:
 
 ``` 
@@ -106,6 +107,7 @@ md_malloc was 1 seconds 152 milliseconds SLOWER than C99-style array
 
 Program ended with exit code: 0
 ```
+
 (Using a 2,9 GHz Intel Core i7 Skylake 6920H CPU, Xcode 10.2 - Apple Clang compiler -Os)
 
 
@@ -116,12 +118,10 @@ The creation of this mini-project was inspired by discussions on stackoverflow r
 * https://stackoverflow.com/questions/4016842/dynamic-contiguous-3d-arrays-in-c
 * https://stackoverflow.com/questions/35385154/dynamically-allocate-contiguous-block-of-memory-for-2d-array-of-unknown-data-typ
 
-
 ## Contact
 
-Comments, bug reports, and suggested improvements are very much welcomed: leo.mccormack(at)aalto.fi
+Comments, bug reports, and suggested improvements are very much welcomed via GitHub "issues" or via email: leo.mccormack(at)aalto.fi
 
 ## License
 
 The code is distributed under the MIT license.
-
